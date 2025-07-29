@@ -1,0 +1,8 @@
+[package]
+name = "flameview-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flameview = { path = "../flameview" }
+clap = { version = "4", features = ["derive"] }
