@@ -1,6 +1,6 @@
 //! flameview — initial placeholder API (will be replaced by milestones).
 pub fn add_one(x: i32) -> i32 {
-    x + 1
+    x.wrapping_add(1)
 }
 
 #[cfg(test)]
