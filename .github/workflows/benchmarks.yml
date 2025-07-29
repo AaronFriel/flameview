@@ -1,0 +1,24 @@
+name: Benchmarks
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bench:
+          - add_one
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run benchmark
+        env:
+          RUSTFLAGS: "--cfg=bench"
+        run: cargo bench --package flameview --bench ${{ matrix.bench }} --verbose || true
