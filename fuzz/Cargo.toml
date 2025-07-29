@@ -15,3 +15,6 @@ path = "fuzz_targets/fuzz_add_one.rs"
 test = false
 doc = false
 bench = false
+
+[package.metadata]
+cargo-fuzz = true

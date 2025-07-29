@@ -1,6 +1,6 @@
 #![no_main]
-use libafl_libfuzzer::fuzz;
 use flameview::add_one;
+use libafl_libfuzzer::fuzz;
 
 fuzz!(|data: &[u8]| {
     if data.len() == 4 {

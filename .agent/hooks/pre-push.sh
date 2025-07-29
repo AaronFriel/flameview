@@ -7,7 +7,7 @@ cargo +nightly --version >/dev/null
 
 cargo build --workspace --release --exclude flameview-fuzz
 cargo test  --workspace --all-features --verbose
-cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo clippy --workspace --exclude flameview-fuzz --all-targets --all-features -- -D warnings
 cargo +nightly fmt --all -- --check
 actionlint -color
 
