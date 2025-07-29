@@ -3,3 +3,6 @@ resolver = "3"
 members = ["crates/flameview", "crates/cli", "fuzz"]
 default-members = ["crates/cli"]
 
+[profile.bench]
+debug = true
+

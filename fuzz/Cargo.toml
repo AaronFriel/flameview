@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 libafl           = { version = "0.15", default-features = false, features = ["std"] }
-libafl_libfuzzer = { version = "0.15", package = "libafl_libfuzzer" }
+libfuzzer_sys = { version = "0.15", package = "libafl_libfuzzer" }
 flameview        = { path = "../crates/flameview" }
 
 [[bin]]
