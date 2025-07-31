@@ -60,9 +60,8 @@ impl FlameTree {
         // Propagate counts up the tree
         let mut p = parent;
         loop {
-            self.arena[p as usize].total_count = self.arena[p as usize]
-                .total_count
-                .saturating_add(self_cnt);
+            self.arena[p as usize].total_count =
+                self.arena[p as usize].total_count.saturating_add(self_cnt);
             if p == self.parents[p as usize] {
                 break;
             }

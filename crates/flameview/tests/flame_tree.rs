@@ -1,4 +1,4 @@
-use flameview::{FlameTree};
+use flameview::FlameTree;
 
 #[test]
 fn insert_preserves_counts() {
