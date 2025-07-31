@@ -7,6 +7,7 @@ fn summary_limits_lines_and_coverage() {
     assert!(n <= 6, "root + \u{2264}5 children");
     assert!(out.contains("(root)"));
     assert!(out.contains("  ")); // at least one indented line
+    #[cfg(not(miri))]
     insta::assert_snapshot!(out, @r#"(root) (100.0%, 1000)
   foo (60.0%, 600)
     bar (40.0%, 400)

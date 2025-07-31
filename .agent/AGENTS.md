@@ -38,6 +38,7 @@ tools, then `bash .agent/hooks/pre-push.sh` before pushing.
 ### Snapshot testing
 - Use [`insta`](https://insta.rs/) for inline snapshots.
 - After modifying snapshots, run `cargo insta review` to accept new outputs.
+- Snapshot assertions do not work under Miri; guard them with `#[cfg(not(miri))]`.
 
 ### Maintaining this file
 - When updating AGENTS.md, provide context and reasoning that future contributors can apply. Avoid notes that only explain a workaround without describing the underlying issue.
