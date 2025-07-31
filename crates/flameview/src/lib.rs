@@ -3,6 +3,9 @@ pub fn add_one(x: i32) -> i32 {
     x.wrapping_add(1)
 }
 
+pub mod arena;
+pub use arena::{FlameTree, Node, NodeId};
+
 #[cfg(test)]
 mod tests {
     use super::*;
