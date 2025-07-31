@@ -21,6 +21,10 @@ fi
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 cargo +nightly install --locked cargo-fuzz flamegraph
 
+if command -v mise >/dev/null 2>&1; then
+    mise settings add idiomatic_version_file_enable_tools python
+fi
+
 # Install Clang 19 and related packages for fuzzing
 sudo apt-get update
 sudo apt-get install -y wget gnupg lsb-release
