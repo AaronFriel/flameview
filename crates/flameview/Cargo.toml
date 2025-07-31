@@ -13,6 +13,7 @@ roxmltree = "0.19"
 [dev-dependencies]
 quickcheck = "1"
 criterion = { version = "0.5", features = ["html_reports"] }
+insta = "1"
 
 [[bench]]
 name = "add_one"

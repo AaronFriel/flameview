@@ -15,6 +15,9 @@ export PATH="$(rustc +nightly --print sysroot)/lib/rustlib/x86_64-unknown-linux-
 export PATH="$(rustc +stable --print sysroot)/lib/rustlib/x86_64-unknown-linux-gnu/bin:$PATH"
 
 cargo +stable  install --locked cargo-nextest cargo-edit
+if ! command -v cargo-insta >/dev/null 2>&1; then
+    curl -LsSf https://insta.rs/install.sh | sh
+fi
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 cargo +nightly install --locked cargo-fuzz flamegraph
 

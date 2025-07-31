@@ -6,6 +6,7 @@ pub fn add_one(x: i32) -> i32 {
 pub mod arena;
 pub use arena::{FlameTree, Node, NodeId};
 pub mod loader;
+mod summarize;
 
 #[cfg(test)]
 mod tests {
