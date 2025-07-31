@@ -1,5 +1,6 @@
+#![cfg(not(miri))]
 use std::fs;
-#[cfg(not(miri))]
+
 #[test]
 fn totals_match_fixture_names() {
     for entry in fs::read_dir("../../tests/data").unwrap() {
