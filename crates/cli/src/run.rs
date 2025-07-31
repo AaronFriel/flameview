@@ -23,7 +23,7 @@ pub fn run(args: Args) -> Result<(), ()> {
                 }
             })?;
             let summary = tree.summarize(max_lines, coverage);
-            println!("{}", summary);
+            println!("{summary}");
         }
     }
     Ok(())
