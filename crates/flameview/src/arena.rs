@@ -70,6 +70,47 @@ impl FlameTree {
         id
     }
 
+    /// Find an existing child node under `parent` with the given `name`.
+    /// Returns `Some(NodeId)` if found.
+    pub(crate) fn find_child(&self, parent: NodeId, name: &str) -> Option<NodeId> {
+        let mut child = self.arena[parent as usize].first_child;
+        while let Some(id) = child {
+            if self.arena[id as usize].name == name {
+                return Some(id);
+            }
+            child = self.arena[id as usize].next_sibling;
+        }
+        None
+    }
+
+    /// Either return the existing child node with `name` or insert a new one.
+    pub(crate) fn get_or_insert_child(&mut self, parent: NodeId, name: &str) -> NodeId {
+        if let Some(id) = self.find_child(parent, name) {
+            id
+        } else {
+            self.insert_child(parent, name, 0)
+        }
+    }
+
+    /// Increment the self and total counts of `node` by `delta` samples.
+    /// The total count is propagated up to the root.
+    pub(crate) fn add_samples(&mut self, node: NodeId, delta: u64) {
+        // Update self count on the leaf
+        self.arena[node as usize].self_count =
+            self.arena[node as usize].self_count.saturating_add(delta);
+
+        // Propagate total count up the ancestry chain including the leaf
+        let mut n = node;
+        loop {
+            self.arena[n as usize].total_count =
+                self.arena[n as usize].total_count.saturating_add(delta);
+            if n == self.parents[n as usize] {
+                break;
+            }
+            n = self.parents[n as usize];
+        }
+    }
+
     /// Total sample count stored at the root node.
     pub fn total_samples(&self) -> u64 {
         self.arena[0].total_count
