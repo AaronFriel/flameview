@@ -31,3 +31,9 @@ and tips that help future contributors. Keep entries brief yet informative.
 
 This document is short-term memory. Run `bash scripts/setup.sh` once to install
 tools, then `bash .agent/hooks/pre-push.sh` before pushing.
+
+### Notes
+- Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.
+
+### Maintaining this file
+- When updating AGENTS.md, provide context and reasoning that future contributors can apply. Avoid notes that only explain a workaround without describing the underlying issue.
