@@ -35,5 +35,9 @@ tools, then `bash .agent/hooks/pre-push.sh` before pushing.
 ### Notes
 - Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.
 
+### Snapshot testing
+- Use [`insta`](https://insta.rs/) for inline snapshots.
+- After modifying snapshots, run `cargo insta review` to accept new outputs.
+
 ### Maintaining this file
 - When updating AGENTS.md, provide context and reasoning that future contributors can apply. Avoid notes that only explain a workaround without describing the underlying issue.
