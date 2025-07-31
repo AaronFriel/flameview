@@ -6,8 +6,9 @@ impl FlameTree {
     /// Pretty-prints an indented overview of the flame tree.
     ///
     /// * `max_lines` – maximum non-root rows to emit (root is always shown)
-    /// * `coverage`  – stop early once cumulative inclusive samples
-    ///   reach this fraction of total (0.0‒1.0).
+    /// * `coverage`  – stop early once cumulative **self** samples
+    ///   reach this fraction of total (0.0‒1.0). This avoids
+    ///   double-counting inclusive time from sibling branches.
     ///
     /// Returns a ready-to-display `String`.
     pub fn summarize(&self, max_lines: usize, coverage: f64) -> String {
