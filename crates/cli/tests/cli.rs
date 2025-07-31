@@ -25,6 +25,12 @@ fn cli_summarize_runs() {
         .expect("run");
     assert!(out.status.success());
     let stdout = String::from_utf8(out.stdout).unwrap();
+    insta::assert_snapshot!(stdout, @r"
+    (root) (100.0%, 1000)
+      foo (60.0%, 600)
+        bar (40.0%, 400)
+      baz (35.0%, 350)
+    ");
     assert!(stdout.contains("(root)"));
     assert!(stdout.lines().count() <= 21);
 }

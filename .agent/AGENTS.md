@@ -37,6 +37,7 @@ tools, then `bash .agent/hooks/pre-push.sh` before pushing.
 
 ### Snapshot testing
 - Use [`insta`](https://insta.rs/) for inline snapshots.
+- Prefer inline snapshots when verifying CLI output or other textual representations.
 - After modifying snapshots, run `cargo insta review` to accept new outputs.
 
 ### Maintaining this file
