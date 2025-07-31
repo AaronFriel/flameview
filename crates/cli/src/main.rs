@@ -1,12 +1,11 @@
-use clap::Parser;
-use flameview::add_one; // will be swapped for real API in Milestone M6
+mod args;
+mod run;
 
-#[derive(Parser)]
-struct Opt {
-    #[arg(long, default_value_t = 0)]
-    value: i32,
-}
+use clap::Parser;
 
 fn main() {
-    println!("{}", add_one(Opt::parse().value));
+    let args = args::Args::parse();
+    if run::run(args).is_err() {
+        std::process::exit(1);
+    }
 }
