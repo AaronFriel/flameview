@@ -74,6 +74,11 @@ impl FlameTree {
     pub fn total_samples(&self) -> u64 {
         self.arena[0].total_count
     }
+
+    /// Mutable access to a node by id.
+    pub fn get_mut(&mut self, id: NodeId) -> &mut Node {
+        &mut self.arena[id as usize]
+    }
 }
 
 impl Index<NodeId> for FlameTree {
