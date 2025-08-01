@@ -6,6 +6,8 @@
 ## Performance analysis (optional)
     cargo bench
     cargo flamegraph --bin flameview-cli
+    # Save folded stacks alongside the SVG flamegraph
+    cargo flamegraph --bin myapp --post-process 'tee stacks.folded'
 
 ## One-time setup
     bash scripts/setup.sh

@@ -24,5 +24,13 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
+      - name: Install cargo-flamegraph
+        run: cargo install flamegraph --locked
+      - name: Install perf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y linux-tools-common "linux-tools-$(uname -r)" || \
+            sudo apt-get install -y linux-tools-generic
+          sudo bash -c 'echo 0 > /proc/sys/kernel/perf_event_paranoid'
       - name: Run test suite
         run: cargo test --all --workspace --exclude flameview-fuzz --all-features --verbose
