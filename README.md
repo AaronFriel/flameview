@@ -19,3 +19,19 @@ flameview-cli summarize stacks.folded
 ```
 
 `cargo flamegraph` will still produce `flamegraph.svg` as usual.
+
+## Benchmarking
+
+To profile the loader on a substantial data set run the built-in
+`load_largest` benchmark:
+
+```bash
+cargo flamegraph --package flameview --bench load_largest -- --bench \
+  --post-process 'tee load_largest.folded'
+```
+
+Inspect the results with:
+
+```bash
+flameview-cli summarize load_largest.folded
+```
