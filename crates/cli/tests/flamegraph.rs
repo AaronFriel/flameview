@@ -3,7 +3,6 @@
 use std::{fs, path::PathBuf, process::Command};
 
 #[test]
-#[cfg(not(miri))]
 fn cargo_flamegraph_saves_folded_stacks() {
     // locate fixture crate
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
