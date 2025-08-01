@@ -8,7 +8,7 @@
     cargo flamegraph --bin flameview-cli
 
 ## One-time setup
-    bash scripts/setup.sh
+    bash .agent/setup.sh
 
 Keep this file in sync with `.github/workflows/` to avoid CI drift.
 
@@ -20,7 +20,7 @@ and tips that help future contributors. Keep entries brief yet informative.
 - `crates/flameview/src/lib.rs` – core library (`add_one` example)
 - `fuzz/` – fuzzing harness (`fuzz_targets/fuzz_add_one.rs`)
 - `.agent/` – local CI helpers
-- `scripts/setup.sh` – install Rust toolchains and tools
+- `.agent/setup.sh` – install Rust toolchains and tools
 
 ## Coding guidelines
 - Start with tests before implementing features
@@ -29,7 +29,7 @@ and tips that help future contributors. Keep entries brief yet informative.
 - Document style feedback here so it's not forgotten
 - Update this file whenever assumptions change or new tasks arise
 
-This document is short-term memory. Run `bash scripts/setup.sh` once to install
+This document is short-term memory. Run `bash .agent/setup.sh` once to install
 tools, then `bash .agent/hooks/pre-push.sh` before pushing.
 
 ### Benchmarks
