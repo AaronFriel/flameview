@@ -1,7 +1,8 @@
-use std::{path::PathBuf, process::Command, fs};
+#![cfg(not(miri))]
+
+use std::{fs, path::PathBuf, process::Command};
 
 #[test]
-#[cfg(not(miri))]
 fn cargo_flamegraph_saves_folded_stacks() {
     // locate fixture crate
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -17,18 +18,18 @@ fn cargo_flamegraph_saves_folded_stacks() {
 
     let mut cmd = Command::new("cargo");
     cmd.args([
-            "flamegraph",
-            "--manifest-path",
-            manifest.to_str().unwrap(),
-            "--bin",
-            "flamegraph-fixture",
-            "--freq",
-            "100",
-            "--output",
-            svg.to_str().unwrap(),
-            "--post-process",
-            &format!("tee {}", folded.to_string_lossy()),
-        ]);
+        "flamegraph",
+        "--manifest-path",
+        manifest.to_str().unwrap(),
+        "--bin",
+        "flamegraph-fixture",
+        "--freq",
+        "100",
+        "--output",
+        svg.to_str().unwrap(),
+        "--post-process",
+        &format!("tee {}", folded.to_string_lossy()),
+    ]);
 
     if let Ok(entries) = std::fs::read_dir("/usr/lib") {
         for e in entries.flatten() {
