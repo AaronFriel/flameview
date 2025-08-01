@@ -11,7 +11,7 @@ fn bench_load_largest(c: &mut Criterion) {
     c.bench_function("load_vertx_all", |b| {
         let data = bytes.clone();
         b.iter(|| {
-            let tree = collapsed::load(black_box(data.as_slice())).unwrap();
+            let tree = collapsed::load_slice(black_box(data.as_slice())).unwrap();
             black_box(tree);
         });
     });
