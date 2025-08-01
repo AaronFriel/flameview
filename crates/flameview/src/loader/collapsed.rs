@@ -1,26 +1,32 @@
-use std::io::Read;
+use std::io::{BufRead, BufReader, Read};
 
 use crate::arena::FlameTree;
 use crate::loader::Error;
 
-pub fn load<R: Read>(mut r: R) -> Result<FlameTree, Error> {
-    let mut s = String::new();
-    r.read_to_string(&mut s)?;
+pub fn load<R: Read>(r: R) -> Result<FlameTree, Error> {
+    let mut reader = BufReader::new(r);
+    let mut line = String::new();
     let mut tree = FlameTree::new();
     let mut scratch = Vec::new();
-    for (line_no, raw) in s.lines().enumerate() {
-        let line = raw.trim();
+    let mut line_no = 0;
+    loop {
+        line.clear();
+        if reader.read_line(&mut line)? == 0 {
+            break;
+        }
+        line_no += 1;
+        let line = line.trim();
         if line.is_empty() {
             continue;
         }
         let Some(space) = line.rfind(' ') else {
-            return Err(Error::BadLine(line_no + 1));
+            return Err(Error::BadLine(line_no));
         };
         let (stack_str, cnt_str) = line.split_at(space);
         let count: u64 = cnt_str
             .trim_start()
             .parse()
-            .map_err(|_| Error::BadLine(line_no + 1))?;
+            .map_err(|_| Error::BadLine(line_no))?;
         scratch.clear();
         let mut parent = tree.root();
         for frame in stack_str.split(';') {

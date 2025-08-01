@@ -6,7 +6,8 @@ Flameview is a small Rust library and CLI for analyzing [folded stack](https://g
 
 When profiling Rust applications you can leverage [`cargo flamegraph`](https://github.com/flamegraph-rs/flamegraph) to both generate an SVG flamegraph and extract the underlying folded stack data.
 
-Use the `--post-process` option with a command like `tee` to save the folded stacks while still allowing `cargo flamegraph` to create the SVG:
+`cargo flamegraph` requires the Linux `perf` tool to be installed and accessible
+in your `PATH`. Use the `--post-process` option with a command like `tee` to save the folded stacks while still allowing `cargo flamegraph` to create the SVG:
 
 ```bash
 cargo flamegraph --bin myapp --post-process 'tee stacks.folded'
@@ -19,3 +20,13 @@ flameview-cli summarize stacks.folded
 ```
 
 `cargo flamegraph` will still produce `flamegraph.svg` as usual.
+
+## Benchmarks
+
+Run Criterion benches to evaluate `flameview` performance. The `load_largest`
+benchmark focuses on a single large stack file which makes it a good target for
+profiling:
+
+```bash
+cargo bench --bench load_largest
+```
