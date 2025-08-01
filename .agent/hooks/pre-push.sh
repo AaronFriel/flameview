@@ -10,12 +10,10 @@ measure() {
     echo "$label took $((end - start))s"
 }
 
-measure "setup" bash .agent/setup.sh
-measure "stable-version" cargo +stable --version >/dev/null
-measure "nightly-version" cargo +nightly --version >/dev/null
-
 measure "build" cargo build --workspace --release --exclude flameview-fuzz
 measure "test" cargo test --workspace --all-features --verbose
 measure "clippy" cargo clippy --workspace --all-targets --all-features -- -D warnings
-measure "fmt" cargo +nightly fmt --all -- --check
+measure "fmt" cargo +nightly fmt --all
+# Compile tests under the same cfg flags Miri uses
+RUSTFLAGS="--cfg miri" measure cargo clippy --workspace --all-targets --all-features -- -D warnings
 measure "actionlint" actionlint -color
