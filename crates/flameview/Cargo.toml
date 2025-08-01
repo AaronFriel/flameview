@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Compact, text-first exploration of FlameGraph data"
 license = "MIT OR Apache-2.0"
+autobenches = false
 
 [dependencies]
 smallvec = "1"
@@ -17,4 +18,8 @@ insta = "1"
 
 [[bench]]
 name = "add_one"
+harness = false
+
+[[bench]]
+name = "load_collapsed"
 harness = false
