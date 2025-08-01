@@ -8,6 +8,8 @@ cargo +nightly --version >/dev/null
 cargo build --workspace --release --exclude flameview-fuzz
 cargo test  --workspace --all-features --verbose
 cargo clippy --workspace --all-targets --all-features -- -D warnings
+# Compile tests under the same cfg flags Miri uses
+RUSTFLAGS="--cfg miri" cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo +nightly fmt --all -- --check
 actionlint -color
 

@@ -1,7 +1,8 @@
+#![cfg(not(miri))]
+
 use std::path::PathBuf;
 use std::process::Command;
 
-#[cfg(not(miri))]
 #[test]
 fn cli_summarize_runs() {
     let exe = env!("CARGO_BIN_EXE_flameview-cli");
