@@ -1,7 +1,7 @@
 # 🤖 AGENTS — Local CI Mirror
 
 ## Mandatory checks (block merge if failing)
-    bash .agent/hooks/pre-push.sh
+    bash .agent/check.sh
 
 ## Performance analysis (optional)
     cargo bench
@@ -30,7 +30,7 @@ and tips that help future contributors. Keep entries brief yet informative.
 - Update this file whenever assumptions change or new tasks arise
 
 This document is short-term memory. Run `bash .agent/setup.sh` once to install
-tools, then `bash .agent/hooks/pre-push.sh` before pushing.
+tools, then `bash .agent/check.sh` before pushing.
 
 ### Benchmarks
 - All benches live in `crates/flameview/benches/` and are executed in CI via
