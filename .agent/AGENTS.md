@@ -32,6 +32,11 @@ and tips that help future contributors. Keep entries brief yet informative.
 This document is short-term memory. Run `bash scripts/setup.sh` once to install
 tools, then `bash .agent/hooks/pre-push.sh` before pushing.
 
+### Benchmarks
+- All benches live in `crates/flameview/benches/` and are executed in CI via
+  `cargo bench --package flameview`. Adding a new benchmark does not require
+  modifying workflow files.
+
 ### Notes
 - Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.
 - Run `cargo clippy -- -D warnings` with `RUSTFLAGS="--cfg miri"` to compile tests with the same cfg flags used by Miri. This catches unused imports or other compile errors before running Miri.
