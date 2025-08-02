@@ -1,72 +1,52 @@
 #![cfg(not(miri))]
 
-use std::path::PathBuf;
+use assert_cmd::prelude::*;
 use std::process::Command;
 
 #[test]
-fn cli_summarize_runs() {
-    let exe = env!("CARGO_BIN_EXE_flameview-cli");
-    let data_path: PathBuf = [
-        env!("CARGO_MANIFEST_DIR"),
-        "..",
-        "..",
-        "tests",
-        "data",
-        "perl.txt",
-    ]
-    .iter()
-    .collect();
-    let out = Command::new(exe)
-        .arg("summarize")
-        .arg(data_path)
-        .arg("--max-lines")
-        .arg("20")
-        .arg("--coverage")
-        .arg("0.8")
-        .output()
-        .expect("run");
-    assert!(out.status.success());
-    let stdout = String::from_utf8(out.stdout).unwrap();
-    insta::assert_snapshot!(stdout, @r"
-    (root) (100.0%, 1000)
-      foo (60.0%, 600)
-        bar (40.0%, 400)
-      baz (35.0%, 350)
-    ");
-    assert!(stdout.contains("(root)"));
-    assert!(stdout.lines().count() <= 21);
+fn parse_help_contains_flags() {
+    let assert = Command::new("cargo")
+        .args(["run", "--bin", "cargo-flameview", "--", "--help"])
+        .assert()
+        .success();
+    let stdout = String::from_utf8(assert.get_output().stdout.clone()).unwrap();
+    let stdout = stdout
+        .lines()
+        .map(|l| l.trim_end())
+        .collect::<Vec<_>>()
+        .join("\n");
+    insta::assert_snapshot!(stdout, @r###"Usage: cargo-flameview [OPTIONS] [TRAILING_ARGUMENTS]...
+
+Arguments:
+  [TRAILING_ARGUMENTS]...
+
+Options:
+      --dev
+      --profile <PROFILE>
+      --package <PACKAGE>
+      --bin <BIN>
+      --example <EXAMPLE>
+      --test <TEST>
+      --bench <BENCH>
+      --unit-test [<NAME>]
+      --unit-bench [<NAME>]
+      --unit-test-kind <UNIT_TEST_KIND>  [possible values: bin, lib]
+      --manifest-path <MANIFEST_PATH>
+      --target <TARGET>
+      --features <FEATURES>
+      --no-default-features
+      --release
+  -h, --help                             Print help
+  -V, --version                          Print version
+"###);
 }
 
 #[test]
-fn cli_summarize_stdin() {
-    use std::io::Write;
-    let exe = env!("CARGO_BIN_EXE_flameview-cli");
-    let data_path: PathBuf = [
-        env!("CARGO_MANIFEST_DIR"),
-        "..",
-        "..",
-        "tests",
-        "data",
-        "perl.txt",
-    ]
-    .iter()
-    .collect();
-    let data = std::fs::read(&data_path).unwrap();
-    let mut child = Command::new(exe)
-        .arg("summarize")
-        .arg("-")
-        .arg("--max-lines")
-        .arg("20")
-        .arg("--coverage")
-        .arg("0.8")
-        .stdin(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::piped())
-        .spawn()
-        .expect("spawn");
-    child.stdin.as_mut().unwrap().write_all(&data).unwrap();
-    let out = child.wait_with_output().unwrap();
-    assert!(out.status.success());
-    let stdout = String::from_utf8(out.stdout).unwrap();
-    assert!(stdout.contains("(root)"));
-    assert!(stdout.lines().count() <= 21);
+fn parse_trailing_arguments() {
+    let assert = Command::new("cargo")
+        .args(["run", "--bin", "cargo-flameview", "--", "--", "foo", "bar"])
+        .assert()
+        .success();
+    let stdout = String::from_utf8(assert.get_output().stdout.clone()).unwrap();
+    assert!(stdout.contains("trailing_arguments: [\n        \"foo\",\n        \"bar\",\n    ],"));
 }
