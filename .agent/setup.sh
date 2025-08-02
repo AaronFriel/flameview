@@ -68,6 +68,16 @@ sudo apt-get install -y \
   linux-tools-common "linux-tools-$(uname -r)" || \
   sudo apt-get install -y linux-tools-generic
 
+# If the running kernel lacks a matching linux-tools package,
+# ensure the generic tools are accessible via the expected path
+TOOLS_DIR="/usr/lib/linux-tools/$(uname -r)"
+if [[ ! -d "$TOOLS_DIR" ]]; then
+  FALLBACK_DIR="$(ls -d /usr/lib/linux-tools/* 2>/dev/null | head -n1 || true)"
+  if [[ -n "$FALLBACK_DIR" && ! -e "$TOOLS_DIR" ]]; then
+    sudo ln -s "$FALLBACK_DIR" "$TOOLS_DIR"
+  fi
+fi
+
 sudo update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-${CLANG_VERSION}   100
 sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CLANG_VERSION} 100
 sudo bash -c 'echo 0 > /proc/sys/kernel/perf_event_paranoid' || true
