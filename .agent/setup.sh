@@ -89,8 +89,8 @@ EXCLUDE_ARGS=(--exclude "$FUZZ_CRATE")
 
 cargo fetch
 cargo build  --workspace --release               "${EXCLUDE_ARGS[@]}"
-cargo test   --workspace --all-features --no-run  "${EXCLUDE_ARGS[@]}"
-cargo clippy --workspace --all-targets --all-features "${EXCLUDE_ARGS[@]}" -- -D warnings
+cargo test   --workspace --no-run               "${EXCLUDE_ARGS[@]}"
+cargo clippy --workspace --all-targets         "${EXCLUDE_ARGS[@]}" -- -D warnings
 
 # Optional fuzz pre-compile
 if [[ -d "$FUZZ_CRATE" ]]; then
