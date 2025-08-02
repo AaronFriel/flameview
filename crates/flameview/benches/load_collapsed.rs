@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
+use std::time::Duration;
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use flameview::loader::collapsed;
@@ -7,6 +8,8 @@ use flameview::loader::collapsed;
 fn bench_load_collapsed(c: &mut Criterion) {
     let data_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/data");
     let mut group = c.benchmark_group("load_collapsed");
+    group.warm_up_time(Duration::from_secs(1));
+    group.measurement_time(Duration::from_secs(1));
     for entry in fs::read_dir(&data_dir).unwrap() {
         let entry = entry.unwrap();
         let path = entry.path();
