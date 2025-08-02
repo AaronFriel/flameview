@@ -48,5 +48,10 @@ fn parse_trailing_arguments() {
         .assert()
         .success();
     let stdout = String::from_utf8(assert.get_output().stdout.clone()).unwrap();
-    assert!(stdout.contains("trailing_arguments: [\n        \"foo\",\n        \"bar\",\n    ],"));
+    let trailing = stdout
+        .split_whitespace()
+        .skip(1)
+        .collect::<Vec<_>>()
+        .join(" ");
+    insta::assert_snapshot!(trailing, @"foo bar");
 }
