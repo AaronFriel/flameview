@@ -7,7 +7,7 @@ fn totals_match_fixture_names() {
         let path = entry.unwrap().path();
         if path.extension().and_then(|s| s.to_str()) == Some("txt") {
             let data = fs::read(&path).unwrap();
-            let tree = flameview::loader::collapsed::load(data.as_slice()).unwrap();
+            let tree = flameview::loader::collapsed::load_slice(data.as_slice()).unwrap();
             if let Some(num) = path
                 .file_stem()
                 .and_then(|s| s.to_str())
