@@ -41,6 +41,9 @@ tools, then `bash .agent/check.sh` before pushing.
 - For quick iterations, `cargo bench --package flameview --features bench-fast`
   runs a small subset of benches with shorter warmup and measurement times so
   the suite finishes in under 30 seconds.
+- For quick test runs, `cargo test --features test-fast` trims fixture sets and
+  lowers property-test iterations. `.agent/check.sh` enables this feature
+  automatically.
 
 ### Notes
 - Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.
