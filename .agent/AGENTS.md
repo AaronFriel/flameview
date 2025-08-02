@@ -30,14 +30,27 @@ and tips that help future contributors. Keep entries brief yet informative.
 - Aim for correctness before optimizations
 - Document style feedback here so it's not forgotten
 - Update this file whenever assumptions change or new tasks arise
+- When renaming or removing code, search (`rg old_name`) for references in
+  workflows, scripts, and docs to prevent stale CI configurations.
 
 This document is short-term memory. Run `bash .agent/setup.sh` once to install
 tools, then `bash .agent/check.sh` before pushing.
 
 ### Benchmarks
 - All benches live in `crates/flameview/benches/` and are executed in CI via
-  `cargo bench --package flameview`. Adding a new benchmark does not require
-  modifying workflow files.
+  `cargo bench --package flameview`.
+- The `flamegraph` workflow generates a flamegraph from the
+  `load_largest` bench. If a bench is renamed or removed, search for stale
+  references (e.g. `rg add_one`) and update `.github/workflows/flamegraph.yml`.
+- Before pushing bench changes, run `cargo bench --package flameview --no-run`
+  to ensure all targets compile and try the workflow command locally:
+  `cargo flamegraph --package flameview --bench load_largest -- --bench`.
+- For quick iterations, `cargo bench --package flameview --features bench-fast`
+  runs a small subset of benches with shorter warmup and measurement times so
+  the suite finishes in under 30 seconds.
+- For quick test runs, `cargo test --features test-fast` trims fixture sets and
+  lowers property-test iterations. `.agent/check.sh` enables this feature
+  automatically.
 
 ### Notes
 - Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.
