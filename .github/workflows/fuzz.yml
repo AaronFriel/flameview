@@ -28,7 +28,7 @@ jobs:
         run: cargo install cargo-fuzz --locked
       - name: Fuzz
         run: |
-          cargo fuzz run fuzz_add_one -- -runs=5000
+          cargo fuzz run summarize -- -runs=5000
       - name: Upload fuzz artifacts
         if: always()
         uses: actions/upload-artifact@v4

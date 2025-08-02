@@ -50,7 +50,10 @@ impl FlameTree {
                 node.total_count
             ));
             printed += 1;
-            cum_total += node.self_count;
+            // Avoid panic on integer overflow when processing extremely large
+            // self counts (for example, crafted fuzz inputs). Saturating add
+            // ensures the cumulative total never wraps.
+            cum_total = cum_total.saturating_add(node.self_count);
 
             // push children of this node
             let mut ch = node.first_child;
