@@ -63,10 +63,9 @@ echo "deb [signed-by=/usr/share/keyrings/llvm.asc] \
 
 sudo apt-get update
 sudo apt-get install -y \
-  clang-${CLANG_VERSION} lldb-${CLANG_VERSION} lld-${CLANG_VERSION} \
-  llvm-${CLANG_VERSION}-dev \
-  linux-tools-common "linux-tools-$(uname -r)" || \
-  sudo apt-get install -y linux-tools-generic
+  clang-${CLANG_VERSION} lldb-${CLANG_VERSION} lld-${CLANG_VERSION} llvm-${CLANG_VERSION}-dev 
+sudo apt-get install -y linux-tools-common "linux-tools-$(uname -r)" \
+  || sudo apt-get install -y linux-tools-generic
 
 # If the running kernel lacks a matching linux-tools package,
 # ensure the generic tools are accessible via the expected path
