@@ -25,6 +25,6 @@ fn main() -> anyhow::Result<()> {
         .map(|s| s.to_string_lossy())
         .collect::<Vec<_>>()
         .join(" ");
-    println!("{}", display);
+    println!("{display}");
     Ok(())
 }
