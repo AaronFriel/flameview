@@ -9,9 +9,10 @@ libafl           = { version = "0.15", default-features = false, features = ["st
 libfuzzer_sys = { version = "0.15", package = "libafl_libfuzzer" }
 flameview        = { path = "../crates/flameview" }
 
+# This binary is run by `.github/workflows/fuzz.yml`; keep name/path in sync.
 [[bin]]
-name = "fuzz_add_one"
-path = "fuzz_targets/fuzz_add_one.rs"
+name = "summarize"
+path = "fuzz_targets/summarize.rs"
 test = false
 doc = false
 bench = false

@@ -1,4 +1,7 @@
 target
 corpus
-artifacts
+artifacts/*
+!artifacts/summarize
+artifacts/summarize/*
+!artifacts/summarize/crash-365590c63669747b
 coverage

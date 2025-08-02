@@ -14,13 +14,18 @@
 
 Keep this file in sync with `.github/workflows/` to avoid CI drift.
 
+## CI consistency
+- When renaming or deleting binaries, fuzz targets, or scripts, search the entire repo (including hidden dirs) with `rg --hidden` and update `.github/workflows`, `Cargo.toml`, and tests.
+- Note cross-file dependencies inline (e.g., comments in manifests pointing to the workflow) so CI ties are explicit.
+- When feedback reveals a missing process step, update this file alongside the code fix to document the lesson.
+
 This AGENTS.md is a living document. Record open tasks, repository structure,
 and tips that help future contributors. Keep entries brief yet informative.
 
 ## Repository overview
 - `crates/cli/src/main.rs` – command-line interface
 - `crates/flameview/src/lib.rs` – core library (`add_one` example)
-- `fuzz/` – fuzzing harness (`fuzz_targets/fuzz_add_one.rs`)
+- `fuzz/` – fuzzing harness (`fuzz_targets/summarize.rs`)
 - `.agent/` – local CI helpers
 - `.agent/setup.sh` – install Rust toolchains and tools
 
