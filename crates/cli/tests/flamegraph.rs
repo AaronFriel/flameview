@@ -1,9 +1,14 @@
 #![cfg(not(miri))]
 
 use std::{fs, path::PathBuf, process::Command};
+use which::which;
 
 #[test]
 fn cargo_flamegraph_saves_folded_stacks() {
+    if which("perf").is_err() {
+        eprintln!("skipping: perf not found");
+        return;
+    }
     // locate fixture crate
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("..")

@@ -24,7 +24,7 @@ fn load_str(s: &str) -> Result<FlameTree, Error> {
             continue;
         }
         let Some(space) = line.rfind(' ') else {
-            return Err(Error::BadLine(line_no + 1));
+            return Err(Error::BadLine(line_no));
         };
         let (stack_str, cnt_str) = line.split_at(space);
         let count: u64 = cnt_str
