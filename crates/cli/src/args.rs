@@ -9,7 +9,7 @@ pub struct Args {
 
 #[derive(Subcommand)]
 pub enum Command {
-    /// Summarize a collapsed stack file
+    /// Summarize a collapsed stack file (use `-` for stdin)
     Summarize {
         /// Input file to read
         file: std::path::PathBuf,

@@ -1,13 +1,23 @@
-use std::io::Read;
+use std::io::{Error as IoError, ErrorKind, Read};
 
 use crate::arena::FlameTree;
 use crate::loader::Error;
 
 pub fn load<R: Read>(mut r: R) -> Result<FlameTree, Error> {
-    let mut s = String::new();
-    r.read_to_string(&mut s)?;
+    let mut buf = Vec::new();
+    r.read_to_end(&mut buf)?;
+    load_slice(&buf)
+}
+
+/// Load a flamegraph from an in-memory slice of UTF-8 bytes.
+pub fn load_slice(data: &[u8]) -> Result<FlameTree, Error> {
+    let s = std::str::from_utf8(data)
+        .map_err(|e| Error::Io(IoError::new(ErrorKind::InvalidData, e)))?;
+    load_str(s)
+}
+
+fn load_str(s: &str) -> Result<FlameTree, Error> {
     let mut tree = FlameTree::new();
-    let mut scratch = Vec::new();
     for (line_no, raw) in s.lines().enumerate() {
         let line = raw.trim();
         if line.is_empty() {
@@ -21,11 +31,9 @@ pub fn load<R: Read>(mut r: R) -> Result<FlameTree, Error> {
             .trim_start()
             .parse()
             .map_err(|_| Error::BadLine(line_no + 1))?;
-        scratch.clear();
         let mut parent = tree.root();
         for frame in stack_str.split(';') {
             let id = tree.get_or_insert_child(parent, frame);
-            scratch.push(id);
             parent = id;
         }
         tree.add_samples(parent, count);

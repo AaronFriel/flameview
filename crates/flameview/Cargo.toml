@@ -23,3 +23,7 @@ harness = false
 [[bench]]
 name = "load_collapsed"
 harness = false
+
+[[bench]]
+name = "load_largest"
+harness = false
