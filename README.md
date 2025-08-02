@@ -44,3 +44,11 @@ The CLI also accepts `-` to read from standard input:
 ```bash
 cat load_largest.folded | flameview-cli summarize -
 ```
+
+For a quicker smoke test that completes in under half a minute, enable the
+`bench-fast` feature. This runs a small, representative subset of benches with
+reduced warmup and measurement times:
+
+```bash
+cargo bench --package flameview --features bench-fast
+```

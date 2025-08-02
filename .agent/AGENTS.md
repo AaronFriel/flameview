@@ -38,6 +38,9 @@ tools, then `bash .agent/check.sh` before pushing.
 - All benches live in `crates/flameview/benches/` and are executed in CI via
   `cargo bench --package flameview`. Adding a new benchmark does not require
   modifying workflow files.
+- For quick iterations, `cargo bench --package flameview --features bench-fast`
+  runs a small subset of benches with shorter warmup and measurement times so
+  the suite finishes in under 30 seconds.
 
 ### Notes
 - Miri runs tests in an isolated environment without access to OS operations like opening directories. Any test that reads from the filesystem should either be skipped with `#[cfg(not(miri))]` or rewritten to avoid directory reads when running under Miri.

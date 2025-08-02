@@ -6,6 +6,9 @@ description = "Compact, text-first exploration of FlameGraph data"
 license = "MIT OR Apache-2.0"
 autobenches = false
 
+[features]
+bench-fast = []
+
 [dependencies]
 smallvec = "1"
 indexmap = "2"
@@ -15,10 +18,7 @@ roxmltree = "0.19"
 quickcheck = "1"
 criterion = { version = "0.5", features = ["html_reports"] }
 insta = "1"
-
-[[bench]]
-name = "add_one"
-harness = false
+cfg-if = "1"
 
 [[bench]]
 name = "load_collapsed"
