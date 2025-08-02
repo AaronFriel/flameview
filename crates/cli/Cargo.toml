@@ -6,8 +6,19 @@ edition = "2021"
 [dependencies]
 flameview = { path = "../flameview" }
 clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+cargo_metadata = "0.18"
 
 [dev-dependencies]
 insta = "1"
 tempfile = "3"
 which = "4"
+assert_cmd = "2"
+
+[[bin]]
+name = "flameview"
+path = "src/bin/flameview.rs"
+
+[[bin]]
+name = "cargo-flameview"
+path = "src/bin/cargo-flameview.rs"
