@@ -1,6 +1,7 @@
 #![cfg(not(miri))]
 
 use assert_cmd::prelude::*;
+use std::path::PathBuf;
 use std::process::Command;
 
 #[test]
@@ -43,8 +44,28 @@ Options:
 
 #[test]
 fn parse_trailing_arguments() {
+    let crate_dir: PathBuf = [
+        env!("CARGO_MANIFEST_DIR"),
+        "tests",
+        "fixtures",
+        "simple-example",
+    ]
+    .iter()
+    .collect();
+    let manifest_cli: PathBuf = [env!("CARGO_MANIFEST_DIR"), "Cargo.toml"].iter().collect();
     let assert = Command::new("cargo")
-        .args(["run", "--bin", "cargo-flameview", "--", "--", "foo", "bar"])
+        .current_dir(&crate_dir)
+        .args([
+            "run",
+            "--manifest-path",
+            manifest_cli.to_str().unwrap(),
+            "--bin",
+            "cargo-flameview",
+            "--",
+            "--",
+            "foo",
+            "bar",
+        ])
         .assert()
         .success();
     let stdout = String::from_utf8(assert.get_output().stdout.clone()).unwrap();
