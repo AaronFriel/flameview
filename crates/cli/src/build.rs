@@ -130,7 +130,7 @@ pub fn build(
     } else {
         cmd.arg("build");
     }
-    if let Some(profile) = &opt.profile {
+    if let Some(profile) = &opt.cargo_profile {
         cmd.args(["--profile", profile]);
     } else if opt.release {
         cmd.arg("--release");

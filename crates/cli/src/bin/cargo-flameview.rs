@@ -2,6 +2,8 @@
 mod build;
 #[path = "../cli/opts.rs"]
 mod opts;
+#[path = "../profile.rs"]
+mod profile;
 
 use clap::Parser;
 use opts::{Opt, TargetKind};
@@ -20,11 +22,13 @@ fn main() -> anyhow::Result<()> {
     let exec = build::RealCommandExecutor;
     let artifacts = build::build(&exec, &opt, kinds)?;
     let cmd = build::workload(&opt, &artifacts)?;
-    let display = cmd
+    let workload = cmd
         .iter()
-        .map(|s| s.to_string_lossy())
-        .collect::<Vec<_>>()
-        .join(" ");
+        .map(|s| s.to_string_lossy().to_string())
+        .collect::<Vec<_>>();
+    let display = workload.join(" ");
     println!("{display}");
+    let result = profile::profile(&exec, &workload, &opt)?;
+    println!("folded: {}", result.folded_path.display());
     Ok(())
 }
