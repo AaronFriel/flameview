@@ -41,7 +41,7 @@ impl CommandExecutor for MockPerf {
                 stderr: Vec::new(),
             })
         } else {
-            panic!("unexpected command: {} {:?}", program, args);
+            panic!("unexpected command: {program} {args:?}");
         }
     }
 }
