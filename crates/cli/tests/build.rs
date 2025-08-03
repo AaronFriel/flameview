@@ -4,13 +4,14 @@ use assert_cmd::prelude::*;
 use std::path::PathBuf;
 use std::process::Command;
 
+#[allow(dead_code)]
 #[path = "../src/build.rs"]
 mod build;
 #[path = "support/mock_exec.rs"]
 mod mock_exec;
 #[path = "../src/cli/opts.rs"]
 mod opts;
-use build::{find_crate_root, find_unique_target, workload, Artifact};
+use build::{find_crate_root, find_unique_target, Artifact};
 use mock_exec::{success, MockCommandExecutor};
 use opts::{Opt, TargetKind};
 use std::fs;
@@ -87,50 +88,34 @@ path="two.rs"
 
 #[test]
 fn workload_warns_without_debuginfo() {
-    let opt = Opt {
-        dev: false,
-        profile: None,
-        package: None,
-        bin: Some("eg".into()),
-        example: None,
-        test: None,
-        bench: None,
-        unit_test: None,
-        unit_bench: None,
-        unit_test_kind: None,
-        manifest_path: None,
-        target: None,
-        features: None,
-        no_default_features: false,
-        release: false,
-        trailing_arguments: vec![],
-    };
-    let art = artifact_example("/tmp/eg");
-    let warning = capture_stderr(|| {
-        workload(&opt, &[art]).unwrap();
-    });
-    assert!(warning.contains("debuginfo"));
-}
-
-fn capture_stderr<F: FnOnce()>(f: F) -> String {
-    use std::io::Read;
-    use std::os::unix::io::FromRawFd;
-    unsafe {
-        let mut fds = [0; 2];
-        libc::pipe(fds.as_mut_ptr());
-        let stderr_fd = libc::STDERR_FILENO;
-        let saved = libc::dup(stderr_fd);
-        libc::dup2(fds[1], stderr_fd);
-        libc::close(fds[1]);
-        f();
-        libc::fflush(std::ptr::null_mut());
-        let mut file = std::fs::File::from_raw_fd(fds[0]);
-        let mut buf = Vec::new();
-        file.read_to_end(&mut buf).unwrap();
-        libc::dup2(saved, stderr_fd);
-        libc::close(saved);
-        String::from_utf8(buf).unwrap()
-    }
+    let crate_dir: PathBuf = [
+        env!("CARGO_MANIFEST_DIR"),
+        "tests",
+        "fixtures",
+        "simple-example",
+    ]
+    .iter()
+    .collect();
+    let manifest_cli: PathBuf = [env!("CARGO_MANIFEST_DIR"), "Cargo.toml"].iter().collect();
+    let assert = Command::new("cargo")
+        .current_dir(&crate_dir)
+        .args([
+            "run",
+            "--manifest-path",
+            manifest_cli.to_str().unwrap(),
+            "--bin",
+            "cargo-flameview",
+            "--",
+            "--release",
+            "--example",
+            "eg",
+            "--",
+            "--help",
+        ])
+        .assert()
+        .success();
+    let stderr = String::from_utf8(assert.get_output().stderr.clone()).unwrap();
+    assert!(stderr.contains("debuginfo"));
 }
 
 #[test]
