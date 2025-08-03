@@ -1,50 +1,30 @@
-use clap::{Parser, ValueEnum};
-use std::path::PathBuf;
+#[path = "../build.rs"]
+mod build;
+#[path = "../cli/opts.rs"]
+mod opts;
 
-#[derive(Parser, Debug)]
-#[command(author, version, about)]
-struct Opt {
-    #[arg(long)]
-    dev: bool,
-    #[arg(long)]
-    profile: Option<String>,
-    #[arg(long)]
-    package: Option<String>,
-    #[arg(long)]
-    bin: Option<String>,
-    #[arg(long)]
-    example: Option<String>,
-    #[arg(long)]
-    test: Option<String>,
-    #[arg(long)]
-    bench: Option<String>,
-    #[arg(long, value_name = "NAME", num_args = 0..=1)]
-    unit_test: Option<Option<String>>,
-    #[arg(long, value_name = "NAME", num_args = 0..=1)]
-    unit_bench: Option<Option<String>>,
-    #[arg(long, value_enum)]
-    unit_test_kind: Option<UnitTestTargetKind>,
-    #[arg(long)]
-    manifest_path: Option<PathBuf>,
-    #[arg(long)]
-    target: Option<String>,
-    #[arg(long)]
-    features: Option<String>,
-    #[arg(long)]
-    no_default_features: bool,
-    #[arg(long)]
-    release: bool,
-    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
-    trailing_arguments: Vec<String>,
-}
+use clap::Parser;
+use opts::{Opt, TargetKind};
 
-#[derive(ValueEnum, Clone, Debug)]
-enum UnitTestTargetKind {
-    Bin,
-    Lib,
-}
-
-fn main() {
+fn main() -> anyhow::Result<()> {
     let opt = Opt::parse();
-    println!("{opt:#?}");
+    let kinds = if opt.example.is_some() {
+        vec![TargetKind::Example]
+    } else if opt.test.is_some() || opt.unit_test.is_some() {
+        vec![TargetKind::Test]
+    } else if opt.bench.is_some() || opt.unit_bench.is_some() {
+        vec![TargetKind::Bench]
+    } else {
+        vec![TargetKind::Bin, TargetKind::Example]
+    };
+    let exec = build::RealCommandExecutor;
+    let artifacts = build::build(&exec, &opt, kinds)?;
+    let cmd = build::workload(&opt, &artifacts)?;
+    let display = cmd
+        .iter()
+        .map(|s| s.to_string_lossy())
+        .collect::<Vec<_>>()
+        .join(" ");
+    println!("{display}");
+    Ok(())
 }
