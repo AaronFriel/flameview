@@ -62,7 +62,7 @@ pub fn profile(
             .join("target")
             .join("flameview")
             .join(profile_name)
-            .join(format!("{}.folded", target_name))
+            .join(format!("{target_name}.folded"))
     };
 
     if let Some(parent) = folded_path.parent() {
