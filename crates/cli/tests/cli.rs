@@ -23,7 +23,7 @@ Arguments:
 
 Options:
       --dev
-      --profile <PROFILE>
+      --profile <CARGO_PROFILE>
       --package <PACKAGE>
       --bin <BIN>
       --example <EXAMPLE>
@@ -37,6 +37,10 @@ Options:
       --features <FEATURES>
       --no-default-features
       --release
+      --frequency <FREQUENCY>            [default: 99]
+      --output <OUTPUT>
+      --keep-perf-data
+      --cmd <CMD>
   -h, --help                             Print help
   -V, --version                          Print version
 "###);
@@ -69,7 +73,8 @@ fn parse_trailing_arguments() {
         .assert()
         .success();
     let stdout = String::from_utf8(assert.get_output().stdout.clone()).unwrap();
-    let trailing = stdout
+    let line = stdout.lines().next().unwrap();
+    let trailing = line
         .split_whitespace()
         .skip(1)
         .collect::<Vec<_>>()

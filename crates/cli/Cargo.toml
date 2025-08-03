@@ -8,6 +8,8 @@ flameview = { path = "../flameview" }
 clap = { version = "4", features = ["derive"] }
 anyhow = "1"
 cargo_metadata = "0.19"
+inferno = "0.11"
+tempfile = "3"
 
 [dev-dependencies]
 insta = "1"

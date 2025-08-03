@@ -1,3 +1,4 @@
+use crate::profile::ProfileOptions;
 pub use cargo_metadata::TargetKind;
 use clap::{Parser, ValueEnum};
 use std::path::PathBuf;
@@ -8,7 +9,8 @@ pub struct Opt {
     #[arg(long)]
     pub dev: bool,
     #[arg(long)]
-    pub profile: Option<String>,
+    #[arg(long = "profile")]
+    pub cargo_profile: Option<String>,
     #[arg(long)]
     pub package: Option<String>,
     #[arg(long)]
@@ -35,6 +37,8 @@ pub struct Opt {
     pub no_default_features: bool,
     #[arg(long)]
     pub release: bool,
+    #[clap(flatten)]
+    pub profile: ProfileOptions,
     #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
     pub trailing_arguments: Vec<String>,
 }

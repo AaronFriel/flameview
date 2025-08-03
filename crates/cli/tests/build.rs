@@ -11,6 +11,9 @@ mod build;
 mod mock_exec;
 #[path = "../src/cli/opts.rs"]
 mod opts;
+#[allow(dead_code)]
+#[path = "../src/profile.rs"]
+mod profile;
 use build::{find_crate_root, find_unique_target, Artifact};
 use mock_exec::{success, MockCommandExecutor};
 use opts::{Opt, TargetKind};
@@ -175,7 +178,7 @@ fn build_uses_mock_executor() {
     let exec = MockCommandExecutor::new(script);
     let opt = Opt {
         dev: false,
-        profile: None,
+        cargo_profile: None,
         package: None,
         bin: Some("eg".into()),
         example: None,
@@ -189,6 +192,12 @@ fn build_uses_mock_executor() {
         features: None,
         no_default_features: false,
         release: false,
+        profile: profile::ProfileOptions {
+            frequency: 99,
+            output: None,
+            keep_perf_data: false,
+            cmd: None,
+        },
         trailing_arguments: vec![],
     };
     let artifacts = build::build(&exec, &opt, vec![TargetKind::Bin]).unwrap();
