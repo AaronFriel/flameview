@@ -1,6 +1,6 @@
 #[test]
 fn summary_limits_lines_and_coverage() {
-    let data = include_str!("../../../tests/data/perl.txt");
+    let data = include_str!("../../../tests/data/small.txt");
     let tree = flameview::loader::collapsed::load_slice(data.as_bytes()).unwrap();
     let out = tree.summarize(5, 0.90);
     let n = out.lines().count();
@@ -8,8 +8,5 @@ fn summary_limits_lines_and_coverage() {
     assert!(out.contains("(root)"));
     assert!(out.contains("  ")); // at least one indented line
     #[cfg(not(miri))]
-    insta::assert_snapshot!(out, @r#"(root) (100.0%, 1000)
-  foo (60.0%, 600)
-    bar (40.0%, 400)
-  baz (35.0%, 350)"#);
+    insta::assert_snapshot!(out);
 }

@@ -706,6 +706,7 @@ dependencies = [
  "insta",
  "libc",
  "ratatui",
+ "regex",
  "serde_json",
  "tempfile",
  "tui-tree-widget",
