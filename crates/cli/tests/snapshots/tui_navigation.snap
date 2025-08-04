@@ -1,0 +1,108 @@
+---
+source: crates/cli/tests/tui_nav_snapshot.rs
+expression: ascii
+---
+▼ root (34)
+  ▶ java (27)
+  ▶ ab (7)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+▼ root (34)
+  ▶ java (27)
+  ▶ ab (7)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+▼ root (34)
+  ▶ java (27)
+  ▶ ab (7)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+▼ root (34)
+  ▼ java (27)
+    ▶ start_thread (27)
+  ▶ ab (7)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+▼ root (34)
+  ▼ java (27)
+    ▶ start_thread (27)
+  ▶ ab (7)

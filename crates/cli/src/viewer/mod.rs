@@ -17,6 +17,11 @@ use crate::{run, ViewArgs};
 mod app;
 use app::{Action, App};
 
+#[cfg(debug_assertions)]
+mod test_harness;
+#[cfg(debug_assertions)]
+pub use test_harness::run_with_backend;
+
 pub fn tui(args: &ViewArgs) -> anyhow::Result<()> {
     let data = if args.file.as_os_str() == "-" {
         let mut buf = Vec::new();

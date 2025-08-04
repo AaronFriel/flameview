@@ -21,6 +21,7 @@ assert_cmd = "2"
 libc = "0.2"
 serde_json = "1"
 regex = "1"
+ratatui = { version = "0.29", default-features = false }
 
 [[bin]]
 name = "flameview"
