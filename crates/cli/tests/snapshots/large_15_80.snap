@@ -1,0 +1,20 @@
+---
+source: crates/cli/tests/summarize_snapshot.rs
+expression: output
+---
+(root) (100.0%, 1425)
+  java (100.0%, 1425)
+    start_thread (98.6%, 1405)
+      java_start (98.6%, 1405)
+        JavaThread::run (92.3%, 1315)
+          JavaThread::thread_main_inner (92.3%, 1315)
+            thread_entry (92.3%, 1315)
+              JavaCalls::call_virtual (92.3%, 1315)
+                JavaCalls::call_virtual (92.3%, 1315)
+                  JavaCalls::call_helper (92.3%, 1315)
+                    call_stub_[j] (92.3%, 1315)
+                      Interpreter_[j] (92.3%, 1315)
+                        Interpreter_[j] (92.3%, 1315)
+                          io/netty/channel/nio/NioEventLoop:.run_[j] (92.3%, 1315)
+                            io/netty/channel/nio/NioEventLoop:.processSelectedKeys_[j] (91.9%, 1310)
+                              io/netty/channel/nio/NioEventLoop:.processSelectedKeysOptimized_[j] (91.9%, 1310)

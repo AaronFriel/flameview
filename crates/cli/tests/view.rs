@@ -13,7 +13,7 @@ fn viewer_loads_tree() {
         "..",
         "tests",
         "data",
-        "perl.txt",
+        "small.txt",
     ]
     .iter()
     .collect();
@@ -34,7 +34,7 @@ fn viewer_skips_when_not_tty() {
         "..",
         "tests",
         "data",
-        "perl.txt",
+        "small.txt",
     ]
     .iter()
     .collect();
@@ -56,7 +56,7 @@ fn cargo_flameview_detects_folded() {
         "..",
         "tests",
         "data",
-        "perl.txt",
+        "small.txt",
     ]
     .iter()
     .collect();
@@ -67,5 +67,5 @@ fn cargo_flameview_detects_folded() {
         .expect("run");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("foo"));
+    assert!(stdout.contains("(root)"));
 }

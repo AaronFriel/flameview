@@ -1,4 +1,0 @@
-foo;bar 400
-foo 200
-baz 350
-other 50

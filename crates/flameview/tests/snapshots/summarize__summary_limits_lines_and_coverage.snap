@@ -1,0 +1,10 @@
+---
+source: crates/flameview/tests/summarize.rs
+expression: out
+---
+(root) (100.0%, 34)
+  java (79.4%, 27)
+    start_thread (79.4%, 27)
+      java_start (79.4%, 27)
+        JavaThread::run (79.4%, 27)
+          JavaThread::thread_main_inner (79.4%, 27)
