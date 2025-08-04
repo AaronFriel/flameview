@@ -7,8 +7,17 @@ mod profile;
 
 use clap::Parser;
 use opts::{Opt, TargetKind};
+use std::path::Path;
 
 fn main() -> anyhow::Result<()> {
+    if let Some(path) = std::env::args().nth(1) {
+        if Path::new(&path).exists() {
+            let mut viewer = std::env::current_exe()?;
+            viewer.set_file_name("flameview");
+            std::process::Command::new(viewer).arg(path).status()?;
+            return Ok(());
+        }
+    }
     let opt = Opt::parse();
     let kinds = if opt.example.is_some() {
         vec![TargetKind::Example]
