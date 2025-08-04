@@ -17,8 +17,8 @@ fn cli_summarize_runs() {
     .iter()
     .collect();
     let out = Command::new(exe)
-        .arg("summarize")
         .arg(data_path)
+        .arg("--summarize")
         .arg("--max-lines")
         .arg("20")
         .arg("--coverage")
@@ -53,8 +53,8 @@ fn cli_summarize_stdin() {
     .collect();
     let data = std::fs::read(&data_path).unwrap();
     let mut child = Command::new(exe)
-        .arg("summarize")
         .arg("-")
+        .arg("--summarize")
         .arg("--max-lines")
         .arg("20")
         .arg("--coverage")
