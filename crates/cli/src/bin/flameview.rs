@@ -1,13 +1,12 @@
-#[path = "../args.rs"]
-mod args;
-#[path = "../run.rs"]
-mod run;
-
 use clap::Parser;
+use flameview_cli::{run, viewer, ViewArgs};
 
-fn main() {
-    let args = args::Args::parse();
-    if run::run(args).is_err() {
-        std::process::exit(1);
+fn main() -> anyhow::Result<()> {
+    let args = ViewArgs::parse();
+    if args.summarize {
+        run::summarize(args)?;
+    } else {
+        viewer::tui(&args)?;
     }
+    Ok(())
 }
