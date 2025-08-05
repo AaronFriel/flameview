@@ -709,7 +709,6 @@ dependencies = [
  "regex",
  "serde_json",
  "tempfile",
- "tui-tree-widget",
  "which",
 ]
 
@@ -1854,16 +1853,6 @@ name = "toml_write"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
-
-[[package]]
-name = "tui-tree-widget"
-version = "0.23.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c14c4488e071617f5b5922222193cdf6725835e492c6229557af85d3c1a4e903"
-dependencies = [
- "ratatui",
- "unicode-width 0.2.0",
-]
 
 [[package]]
 name = "tuple_list"

@@ -15,7 +15,13 @@ use flameview::loader::{self, collapsed};
 use crate::{run, ViewArgs};
 
 mod app;
+pub mod spark_tree_view;
 use app::{Action, App};
+
+#[cfg(debug_assertions)]
+mod test_harness;
+#[cfg(debug_assertions)]
+pub use test_harness::run_with_backend;
 
 pub fn tui(args: &ViewArgs) -> anyhow::Result<()> {
     let data = if args.file.as_os_str() == "-" {
@@ -38,7 +44,7 @@ pub fn tui(args: &ViewArgs) -> anyhow::Result<()> {
 
     enable_raw_mode()?;
     let mut terminal = setup_terminal()?;
-    let mut app = App::new(&tree);
+    let mut app = App::new(&tree, args.max_lines, args.coverage);
 
     let res = run_app(&mut terminal, &mut app);
     restore_terminal(&mut terminal)?;

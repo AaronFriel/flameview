@@ -1,0 +1,85 @@
+---
+source: crates/cli/tests/tui_nav_snapshot.rs
+expression: ascii
+---
+cum% self%   function                     spark
+ 100    0   ▼ root                   ░░░░░░░░░░░░░░░
+  57   14     ▶ foo                        ██░░░░░░░
+  14   14       zzz                               ██
+  14   14       qux                               ██
+  14   14       baz                               ██
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+cum% self%   function                     spark
+ 100    0   ▼ root                   ░░░░░░░░░░░░░░░
+  57   14     ▶ foo                        ██░░░░░░░
+  14   14       zzz                               ██
+  14   14       qux                               ██
+  14   14       baz                               ██
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+cum% self%   function                     spark
+ 100    0   ▼ root                   ░░░░░░░░░░░░░░░
+  57   14     ▼ foo                        ██░░░░░░░
+  43   43         bar                         ██████
+  14   14       zzz                               ██
+  14   14       qux                               ██
+  14   14       baz                               ██
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- frame ---
+cum% self%   function                     spark
+ 100    0   ▼ root                   ░░░░░░░░░░░░░░░
+  57   14     ▶ foo                        ██░░░░░░░
+  14   14       zzz                               ██
+  14   14       qux                               ██
+  14   14       baz                               ██
