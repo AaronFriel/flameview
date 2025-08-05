@@ -1,0 +1,36 @@
+---
+source: crates/cli/tests/tui_spark_tree_snapshot.rs
+expression: ascii
+---
+cum% self%   function                     spark
+ 100    0   ▼ root                   ░░░░░░░░░░░░░░░
+  57   14     ▶ foo                        ██░░░░░░░
+  14   14       zzz                               ██
+  14   14       qux                               ██
+  14   14     … Other                             ██
+
+
+
+
+
+
+--- frame ---
+cum% self%   function                     spark
+ 100    0   ▼ root
+  57   14     ▶ foo
+  14   14       zzz
+  14   14       qux
+  14   14     … Other
+
+
+
+
+
+
+--- frame ---
+cum% self%   function                     spark
+ 100    0   ▼ root
+  57   14     ▶ foo
+  14   14       zzz
+  14   14       qux
+  14   14       baz

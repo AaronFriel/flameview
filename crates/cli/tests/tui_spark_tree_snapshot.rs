@@ -8,7 +8,7 @@ use ratatui::buffer::Buffer;
 use ratatui::crossterm::event::{KeyCode, KeyEvent};
 
 #[test]
-fn tui_navigation_snapshot() {
+fn tui_spark_tree_snapshot() {
     let data_path: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
         "..",
@@ -22,14 +22,17 @@ fn tui_navigation_snapshot() {
     let args = ViewArgs {
         file: data_path,
         summarize: false,
-        max_lines: 50,
-        coverage: 0.95,
+        max_lines: 4,
+        coverage: 0.9,
     };
-    let backend = TestBackend::new(80, 24);
+    let backend = TestBackend::new(80, 12);
     let script = vec![
+        KeyEvent::from(KeyCode::Char('s')),
+        KeyEvent::from(KeyCode::Down),
+        KeyEvent::from(KeyCode::Down),
+        KeyEvent::from(KeyCode::Down),
         KeyEvent::from(KeyCode::Down),
         KeyEvent::from(KeyCode::Right),
-        KeyEvent::from(KeyCode::Char('h')),
         KeyEvent::from(KeyCode::Char('q')),
     ];
     let frames = run_with_backend(&args, backend, script).expect("run");
@@ -50,12 +53,13 @@ fn tui_navigation_snapshot() {
         }
         out
     }
-    let ascii = frames
+    let indices = [0usize, 1, 6];
+    let ascii = indices
         .iter()
-        .map(buf_to_string)
+        .map(|&i| buf_to_string(&frames[i]))
         .collect::<Vec<_>>()
         .join("\n--- frame ---\n");
     insta::with_settings!({ prepend_module_to_snapshot => false }, {
-        insta::assert_snapshot!("tui_navigation", ascii);
+        insta::assert_snapshot!("tui_spark_tree", ascii);
     });
 }

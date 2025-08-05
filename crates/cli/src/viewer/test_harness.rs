@@ -37,7 +37,7 @@ where
     })?;
 
     let mut term = Terminal::new(backend)?;
-    let mut app = App::new(&tree);
+    let mut app = App::new(&tree, args.max_lines, args.coverage);
     let mut buffers = Vec::new();
 
     for ev in script {
