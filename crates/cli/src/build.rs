@@ -79,11 +79,12 @@ pub fn find_unique_target(
     let mut defaults = Vec::new();
     for p in packages {
         for t in &p.targets {
-            if t.kind.iter().any(|k| kind.contains(k)) {
+            let tkinds: Vec<TargetKind> = t.kind.iter().filter_map(|k| k.parse().ok()).collect();
+            if tkinds.iter().any(|k| kind.contains(k)) {
                 let bt = BinaryTarget {
                     package: p.name.clone(),
                     target: t.name.clone(),
-                    kind: t.kind.clone(),
+                    kind: tkinds.clone(),
                 };
                 if let Some(def) = &p.default_run {
                     if def == &t.name {
@@ -266,7 +267,7 @@ pub fn workload(opt: &Opt, artifacts: &[Artifact]) -> anyhow::Result<Workload> {
     };
     let artifact = artifacts
         .iter()
-        .find(|a| a.target.name == name && a.target.kind.contains(&kind))
+        .find(|a| a.target.name == name && a.target.kind.iter().any(|k| k == kind.as_str()))
         .ok_or_else(|| anyhow!("target artifact not found"))?;
     let exe = artifact
         .executable

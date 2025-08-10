@@ -19,8 +19,8 @@ This stores the stacks in `stacks.folded` which can be inspected with `flameview
 flameview-cli summarize stacks.folded
 ```
 
-From Rust you can parse collapsed stacks already loaded in memory using
-`flameview::loader::collapsed::load_slice`.
+From Rust you can parse collapsed stacks via the streaming loader
+`flameview::load_stream`.
 
 `cargo flamegraph` will still produce `flamegraph.svg` as usual.
 
@@ -53,3 +53,9 @@ reduced warmup and measurement times:
 ```bash
 cargo bench --package flameview --features bench-fast
 ```
+
+## Large tests
+
+Some integration tests exercise the loader on a 200&nbsp;MiB sample to guard
+against excessive memory use. These are disabled by default; run
+`cargo test --all-features` to include them.

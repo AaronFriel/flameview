@@ -1,7 +1,38 @@
 use crate::profile::ProfileOptions;
-pub use cargo_metadata::TargetKind;
 use clap::{Parser, ValueEnum};
 use std::path::PathBuf;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TargetKind {
+    Bin,
+    Example,
+    Test,
+    Bench,
+}
+
+impl TargetKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            TargetKind::Bin => "bin",
+            TargetKind::Example => "example",
+            TargetKind::Test => "test",
+            TargetKind::Bench => "bench",
+        }
+    }
+}
+
+impl std::str::FromStr for TargetKind {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "bin" => Ok(TargetKind::Bin),
+            "example" => Ok(TargetKind::Example),
+            "test" => Ok(TargetKind::Test),
+            "bench" => Ok(TargetKind::Bench),
+            _ => Err(()),
+        }
+    }
+}
 
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about)]

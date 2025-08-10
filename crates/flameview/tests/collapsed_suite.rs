@@ -21,7 +21,7 @@ fn totals_match_fixture_names() {
 
     for path in paths {
         let data = fs::read(&path).unwrap();
-        let tree = flameview::loader::collapsed::load_slice(data.as_slice()).unwrap();
+        let tree = flameview::load_stream(std::io::Cursor::new(data)).unwrap();
         if let Some(num) = path
             .file_stem()
             .and_then(|s| s.to_str())

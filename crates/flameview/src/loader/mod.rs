@@ -1,13 +1,11 @@
 pub mod collapsed;
 
-#[derive(Debug)]
-pub enum Error {
-    Io(std::io::Error),
-    BadLine(usize),
-}
+use thiserror::Error;
 
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
-        Error::Io(e)
-    }
+#[derive(Debug, Error)]
+pub enum Error {
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
+    #[error("parse error on line {0}")]
+    BadLine(usize),
 }
