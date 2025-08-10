@@ -1,25 +1,38 @@
-use std::io::{Error as IoError, ErrorKind, Read};
+use std::io::{BufRead, BufReader, Cursor, Read};
 
 use crate::arena::FlameTree;
 use crate::loader::Error;
 
-pub fn load<R: Read>(mut r: R) -> Result<FlameTree, Error> {
-    let mut buf = Vec::new();
-    r.read_to_end(&mut buf)?;
-    load_slice(&buf)
+#[deprecated(note = "use load_stream instead")]
+pub fn load<R: Read>(r: R) -> Result<FlameTree, Error> {
+    load_stream(BufReader::new(r))
 }
 
 /// Load a flamegraph from an in-memory slice of UTF-8 bytes.
+#[deprecated(note = "use load_stream instead")]
 pub fn load_slice(data: &[u8]) -> Result<FlameTree, Error> {
-    let s = std::str::from_utf8(data)
-        .map_err(|e| Error::Io(IoError::new(ErrorKind::InvalidData, e)))?;
-    load_str(s)
+    load_stream(Cursor::new(data))
 }
 
-fn load_str(s: &str) -> Result<FlameTree, Error> {
+#[cfg(test)]
+#[allow(dead_code)]
+pub(crate) fn load_str(s: &str) -> Result<FlameTree, Error> {
+    load_stream(Cursor::new(s.as_bytes()))
+}
+
+/// Load a flamegraph from a buffered reader.
+pub fn load_stream<R: BufRead>(mut r: R) -> Result<FlameTree, Error> {
     let mut tree = FlameTree::new();
-    for (line_no, raw) in s.lines().enumerate() {
-        let line = raw.trim();
+    let mut buf = String::new();
+    let mut line_no: usize = 0;
+    loop {
+        buf.clear();
+        let n = r.read_line(&mut buf)?;
+        if n == 0 {
+            break;
+        }
+        line_no += 1;
+        let line = buf.trim().to_owned();
         if line.is_empty() {
             continue;
         }
@@ -30,7 +43,7 @@ fn load_str(s: &str) -> Result<FlameTree, Error> {
         let count: u64 = cnt_str
             .trim_start()
             .parse()
-            .map_err(|_| Error::BadLine(line_no + 1))?;
+            .map_err(|_| Error::BadLine(line_no))?;
         let mut parent = tree.root();
         for frame in stack_str.split(';') {
             let id = tree.get_or_insert_child(parent, frame);

@@ -1,8 +1,10 @@
 pub mod run;
+pub mod summarize;
 pub mod viewer;
 
 use clap::Parser;
-use std::path::PathBuf;
+use flameview::loader;
+use std::path::{Path, PathBuf};
 
 #[derive(Parser, Clone)]
 pub struct ViewArgs {
@@ -17,4 +19,17 @@ pub struct ViewArgs {
     /// Coverage fraction for summary
     #[arg(long, default_value_t = 0.95)]
     pub coverage: f64,
+}
+
+pub(crate) fn map_loader_err(e: loader::Error, file: &Path) -> anyhow::Error {
+    match e {
+        loader::Error::Io(_) => {
+            if file.as_os_str() == "-" {
+                anyhow::anyhow!("flameview: unable to read stdin")
+            } else {
+                anyhow::anyhow!("flameview: unable to read {}", file.display())
+            }
+        }
+        loader::Error::BadLine(line) => anyhow::anyhow!("flameview: parse error on line {line}"),
+    }
 }
