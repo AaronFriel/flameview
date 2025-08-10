@@ -2,6 +2,7 @@
 resolver = "3"
 members = ["crates/flameview", "crates/cli", "fuzz"]
 default-members = ["crates/cli"]
+# The `large-tests` feature enables memory-intensive integration tests.
 
 [profile.bench]
 debug = true

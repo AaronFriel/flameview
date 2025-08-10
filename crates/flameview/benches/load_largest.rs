@@ -1,12 +1,14 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use flameview::loader::collapsed;
+use flameview::load_stream;
+use std::io::Cursor;
 use std::time::Duration;
 
 fn bench_load_largest(c: &mut Criterion) {
     let data = include_bytes!("../../../tests/data/perf-vertx-stacks-01-collapsed-all.txt");
     c.bench_function("load_largest", |b| {
         b.iter(|| {
-            let tree = collapsed::load(black_box(&data[..])).unwrap();
+            let reader = Cursor::new(black_box(&data[..]));
+            let tree = load_stream(reader).unwrap();
             black_box(tree);
         });
     });

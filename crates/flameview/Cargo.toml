@@ -17,6 +17,7 @@ test-fast = []
 smallvec = "1"
 indexmap = "2"
 roxmltree = "0.19"
+thiserror = "1"
 
 [dev-dependencies]
 quickcheck = "1"

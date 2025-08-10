@@ -1,5 +1,4 @@
-use std::fs;
-use std::io::{self, IsTerminal, Read};
+use std::io::{self, BufRead, IsTerminal};
 use std::time::Duration;
 
 use ratatui::backend::CrosstermBackend;
@@ -10,29 +9,24 @@ use ratatui::crossterm::{
 };
 use ratatui::Terminal;
 
-use flameview::loader::{self, collapsed};
+use flameview::{input, loader::collapsed};
 
-use crate::{run, ViewArgs};
+use crate::ViewArgs;
 
 mod app;
 use app::{Action, App};
 
 pub fn tui(args: &ViewArgs) -> anyhow::Result<()> {
-    let data = if args.file.as_os_str() == "-" {
-        let mut buf = Vec::new();
-        io::stdin().read_to_end(&mut buf)?;
-        buf
-    } else {
-        fs::read(&args.file)?
-    };
+    let reader = input::open_source(&args.file)?;
+    tui_from_reader(args, reader)
+}
 
-    let tree = collapsed::load_slice(data.as_slice()).map_err(|e| match e {
-        loader::Error::Io(err) => err.into(),
-        loader::Error::BadLine(line) => anyhow::anyhow!("parse error on line {line}"),
-    })?;
+/// Internal helper so tests can inject their own reader.
+pub fn tui_from_reader<R: BufRead>(args: &ViewArgs, reader: R) -> anyhow::Result<()> {
+    let tree = collapsed::load_stream(reader).map_err(|e| crate::map_loader_err(e, &args.file))?;
 
     if !io::stdout().is_terminal() {
-        run::summarize(args.clone())?;
+        println!("{}", tree.summarize(args.max_lines, args.coverage));
         return Ok(());
     }
 
@@ -44,6 +38,9 @@ pub fn tui(args: &ViewArgs) -> anyhow::Result<()> {
     restore_terminal(&mut terminal)?;
     res
 }
+
+#[allow(unused_imports)]
+pub(crate) use tui_from_reader as tui_with_reader;
 
 type TuiTerminal = Terminal<CrosstermBackend<std::io::Stdout>>;
 

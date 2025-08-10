@@ -5,7 +5,6 @@ edition = "2021"
 publish = false
 
 [dependencies]
-libafl           = { version = "0.15", default-features = false, features = ["std"] }
 libfuzzer_sys = { version = "0.15", package = "libafl_libfuzzer" }
 flameview        = { path = "../crates/flameview" }
 

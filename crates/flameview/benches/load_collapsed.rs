@@ -1,10 +1,11 @@
 use std::fs;
+use std::io::Cursor;
 use std::path::PathBuf;
 use std::time::Duration;
 
 use cfg_if::cfg_if;
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use flameview::loader::collapsed;
+use flameview::load_stream;
 
 fn bench_load_collapsed(c: &mut Criterion) {
     let data_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/data");
@@ -49,7 +50,8 @@ fn bench_load_collapsed(c: &mut Criterion) {
         group.bench_function(BenchmarkId::new("load", &name), move |b| {
             let data = bytes.clone();
             b.iter(|| {
-                let tree = collapsed::load(black_box(data.as_slice())).unwrap();
+                let reader = Cursor::new(black_box(data.as_slice()));
+                let tree = load_stream(reader).unwrap();
                 black_box(tree);
             });
         });
