@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flameview Profile Binary"
+  short_description: "Profile Rust binaries and ingest into flameview"
+  default_prompt: "Use this skill to run cargo flamegraph/perf workflows for a Rust binary, generate folded stacks, and inspect them with flameview."

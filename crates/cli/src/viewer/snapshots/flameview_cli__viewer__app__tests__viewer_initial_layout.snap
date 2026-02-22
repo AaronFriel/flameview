@@ -1,0 +1,21 @@
+---
+source: crates/cli/src/viewer/app.rs
+expression: snapshot
+---
+flameview  visible:16  samples:320  mode:normal  sort:total  q:''  min:0.0%  hot:false  hide-rt:false
+      total   tot%  self% spark      flag  frame
+        320 100.0   0.0 ########## C     v root
+        320 100.0   0.0 ########## -     v root
+        163  50.9   0.0 #####..... -       v backend
+        110  34.4   0.0 ###....... C         v db
+        110  34.4  34.4 ===....... LS            query
+         33  10.3   0.0 #......... -         v api
+         26   8.1   8.1 =......... LS            serialize
+          7   2.2   2.2 .......... L             parse
+         20   6.2   0.0 #......... C         v cache
+         20   6.2   6.2 =......... LS            lookup
+        157  49.1   0.0 #####..... -       v frontend
+        125  39.1   0.0 ####...... -         v render
+         90  28.1  28.1 ===....... LS            diff
+         35  10.9  10.9 =......... LS            layout
+ready | rows:1/17

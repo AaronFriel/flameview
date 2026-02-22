@@ -57,15 +57,18 @@ impl FlameTree {
         self.arena[parent as usize].first_child = Some(id);
         self.arena.push(node);
         self.parents.push(parent);
-        // Propagate counts up the tree
-        let mut p = parent;
-        loop {
-            self.arena[p as usize].total_count =
-                self.arena[p as usize].total_count.saturating_add(self_cnt);
-            if p == self.parents[p as usize] {
-                break;
+
+        if self_cnt != 0 {
+            // Propagate counts up the tree only when there is an actual delta.
+            let mut p = parent;
+            loop {
+                self.arena[p as usize].total_count =
+                    self.arena[p as usize].total_count.saturating_add(self_cnt);
+                if p == self.parents[p as usize] {
+                    break;
+                }
+                p = self.parents[p as usize];
             }
-            p = self.parents[p as usize];
         }
         id
     }

@@ -1,0 +1,12 @@
+---
+source: crates/cli/src/viewer/app.rs
+expression: snapshot
+---
+flameview  visible:4  samples:320  mode:normal  sort:total  q:'query'  min:0.5%  hot:true  hide-rt:false
+      total   tot%  self% spark      flag  frame
+        320 100.0   0.0 ########## C     v root
+        320 100.0   0.0 ########## -     v root
+        163  50.9   0.0 #####..... -       v backend
+        110  34.4   0.0 ###....... C         v db
+        110  34.4  34.4 ===....... LS            query
+search applied: 'query' | match:1/1 | rows:5/5

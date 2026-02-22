@@ -32,16 +32,15 @@ pub fn load_stream<R: BufRead>(mut r: R) -> Result<FlameTree, Error> {
             break;
         }
         line_no += 1;
-        let line = buf.trim().to_owned();
+        let line = buf.trim_end_matches(['\n', '\r']);
         if line.is_empty() {
             continue;
         }
         let Some(space) = line.rfind(' ') else {
             return Err(Error::BadLine(line_no));
         };
-        let (stack_str, cnt_str) = line.split_at(space);
-        let count: u64 = cnt_str
-            .trim_start()
+        let stack_str = &line[..space];
+        let count: u64 = line[space + 1..]
             .parse()
             .map_err(|_| Error::BadLine(line_no))?;
         let mut parent = tree.root();

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flameview TUI Driver"
+  short_description: "Run and interact with flameview terminal UX"
+  default_prompt: "Use this skill to launch flameview on folded stacks and exercise interactive controls for UX validation and debugging."

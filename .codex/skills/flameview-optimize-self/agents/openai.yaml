@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flameview Optimize Self"
+  short_description: "Profile and optimize flameview itself"
+  default_prompt: "Use this skill to generate heavy folded inputs, profile flameview with high sample rates, inspect hotspots, and benchmark optimization changes."

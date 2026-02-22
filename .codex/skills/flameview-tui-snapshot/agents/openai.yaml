@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flameview TUI Snapshots"
+  short_description: "Create and review flameview interactive snapshots"
+  default_prompt: "Use this skill to generate and review snapshot-style regressions for flameview TUI after scripted key sequences."
