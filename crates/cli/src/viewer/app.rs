@@ -61,7 +61,7 @@ impl Default for Filters {
             query: String::new(),
             min_total_pct: 0.0,
             hot_only: false,
-            hide_runtime: false,
+            hide_runtime: true,
         }
     }
 }
@@ -73,6 +73,7 @@ struct RowMetrics {
     label: String,
     total_count: u64,
     self_count: u64,
+    child_count: usize,
     total_pct: f64,
     self_pct: f64,
     has_children: bool,
@@ -116,7 +117,7 @@ impl<'a> App<'a> {
             sort_mode: SortMode::TotalDesc,
             viewport_rows: DEFAULT_VIEWPORT_ROWS,
             total_samples: tree.total_samples(),
-            status_msg: String::from("ready"),
+            status_msg: String::from("ready (runtime hidden; press f to toggle)"),
             match_indices: Vec::new(),
             match_cursor: 0,
         };
@@ -517,29 +518,39 @@ impl<'a> App<'a> {
         let child_count = self.child_count(id);
         let total_pct = ratio_pct(node.total_count, self.total_samples);
         let self_pct = ratio_pct(node.self_count, self.total_samples);
+        let hide_runtime_bridge =
+            self.filters.hide_runtime && id != root && is_runtime_frame(&node.name);
         let expanded = id == root || self.expanded.contains(&id);
 
-        self.rows.push(RowMetrics {
-            id,
-            depth,
-            label: node.name.clone(),
-            total_count: node.total_count,
-            self_count: node.self_count,
-            total_pct,
-            self_pct,
-            has_children,
-            expanded,
-            flags: heuristic_flags(has_children, child_count, total_pct, self_pct),
-        });
+        if !hide_runtime_bridge {
+            self.rows.push(RowMetrics {
+                id,
+                depth,
+                label: node.name.clone(),
+                total_count: node.total_count,
+                self_count: node.self_count,
+                child_count,
+                total_pct,
+                self_pct,
+                has_children,
+                expanded,
+                flags: heuristic_flags(has_children, child_count, total_pct, self_pct),
+            });
+        }
 
-        if !expanded {
+        if !hide_runtime_bridge && !expanded {
             return;
         }
 
+        let child_depth = if hide_runtime_bridge {
+            depth
+        } else {
+            depth.saturating_add(1)
+        };
         let mut children = self.children(id);
         self.sort_children(&mut children);
         for child in children {
-            self.collect_rows(child, depth + 1, subtree_match_memo);
+            self.collect_rows(child, child_depth, subtree_match_memo);
         }
     }
 
@@ -641,13 +652,25 @@ impl<'a> App<'a> {
                 .iter()
                 .filter(|row| row.has_children && !row.expanded)
                 .max_by(|a, b| {
-                    a.total_count
-                        .cmp(&b.total_count)
-                        .then_with(|| b.self_count.cmp(&a.self_count))
-                        .then_with(|| {
-                            // Prefer shallower nodes when scores tie.
-                            b.depth.cmp(&a.depth)
-                        })
+                    let a_is_chain = a.child_count == 1 && a.self_count == 0;
+                    let b_is_chain = b.child_count == 1 && b.self_count == 0;
+                    let a_not_runtime = !is_runtime_frame(&a.label);
+                    let b_not_runtime = !is_runtime_frame(&b.label);
+
+                    (
+                        a_not_runtime as u8,
+                        (!a_is_chain) as u8,
+                        a.self_count,
+                        a.total_count,
+                        usize::MAX - a.depth,
+                    )
+                        .cmp(&(
+                            b_not_runtime as u8,
+                            (!b_is_chain) as u8,
+                            b.self_count,
+                            b.total_count,
+                            usize::MAX - b.depth,
+                        ))
                 })
                 .map(|row| row.id);
 
@@ -845,17 +868,28 @@ fn heuristic_flags(
 }
 
 fn is_runtime_frame(name: &str) -> bool {
+    let mut normalized = name.trim_start_matches(|c: char| {
+        matches!(c, '<' | '>' | '&' | '*' | '(' | ')' | '\'' | ' ')
+    });
+    if let Some(stripped) = normalized.strip_prefix("dyn ") {
+        normalized = stripped;
+    }
+
     const PREFIXES: &[&str] = &[
         "std::",
         "core::",
         "alloc::",
+        "criterion::",
+        "test::",
         "__libc",
         "_start",
         "main",
         "[libc",
         "[ld-linux",
     ];
-    PREFIXES.iter().any(|prefix| name.starts_with(prefix))
+    PREFIXES
+        .iter()
+        .any(|prefix| normalized.starts_with(prefix))
 }
 
 #[cfg(all(test, not(miri)))]
@@ -880,6 +914,15 @@ root;backend;cache;lookup 20
 root;backend;api;serialize 18
 root;backend;api;serialize 8
 root;backend;api;parse 7
+";
+        collapsed::load_stream(Cursor::new(data.as_bytes())).unwrap()
+    }
+
+    fn runtime_chain_tree() -> flameview::arena::FlameTree {
+        let data = "\
+root;streaming_json_;_start;__libc_start_main;main;std::rt::lang_start_internal;std::sys::backtrace::__rust_begin_short_backtrace;streaming_json_large::main;streaming_json_large::benches;parse_values 900
+root;streaming_json_;_start;__libc_start_main;main;std::rt::lang_start_internal;std::sys::backtrace::__rust_begin_short_backtrace;streaming_json_large::main;streaming_json_large::benches;parse_events 600
+root;streaming_json_;_start;__libc_start_main;main;std::rt::lang_start_internal;std::sys::backtrace::__rust_begin_short_backtrace;streaming_json_large::main;streaming_json_large::cleanup 30
 ";
         collapsed::load_stream(Cursor::new(data.as_bytes())).unwrap()
     }
@@ -913,5 +956,27 @@ root;backend;api;parse 7
         let mut app = App::new(&tree);
         let visible = app.visible_rows_len(10);
         assert!(visible >= 8, "expected auto expansion, got {visible}");
+    }
+
+    #[test]
+    fn runtime_bridges_hidden_by_default() {
+        let tree = runtime_chain_tree();
+        let mut app = App::new(&tree);
+        let snapshot = app.snapshot_text(14, 56);
+        assert!(snapshot.contains("hide-rt:true"), "{snapshot}");
+        assert!(!snapshot.contains("_start"), "{snapshot}");
+        assert!(!snapshot.contains("std::rt::lang_start_internal"), "{snapshot}");
+        assert!(snapshot.contains("streaming_json_large::benches"), "{snapshot}");
+    }
+
+    #[test]
+    fn runtime_filter_toggle_reveals_runtime_frames() {
+        let tree = runtime_chain_tree();
+        let mut app = App::new(&tree);
+        app.on_key(KeyCode::Char('f'));
+        let snapshot = app.snapshot_text(14, 56);
+        assert!(snapshot.contains("hide-rt:false"), "{snapshot}");
+        assert!(snapshot.contains("_start"), "{snapshot}");
+        assert!(snapshot.contains("std::rt::lang_start_internal"), "{snapshot}");
     }
 }

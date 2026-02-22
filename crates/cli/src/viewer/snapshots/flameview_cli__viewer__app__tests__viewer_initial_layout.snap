@@ -2,7 +2,7 @@
 source: crates/cli/src/viewer/app.rs
 expression: snapshot
 ---
-flameview  visible:16  samples:320  mode:normal  sort:total  q:''  min:0.0%  hot:false  hide-rt:false
+flameview  visible:16  samples:320  mode:normal  sort:total  q:''  min:0.0%  hot:false  hide-rt:true
       total   tot%  self% spark      flag  frame
         320 100.0   0.0 ########## C     v root
         320 100.0   0.0 ########## -     v root
@@ -18,4 +18,4 @@ flameview  visible:16  samples:320  mode:normal  sort:total  q:''  min:0.0%  hot
         125  39.1   0.0 ####...... -         v render
          90  28.1  28.1 ===....... LS            diff
          35  10.9  10.9 =......... LS            layout
-ready | rows:1/17
+ready (runtime hidden; press f to toggle) | rows:1/17
