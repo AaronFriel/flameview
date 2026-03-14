@@ -193,7 +193,8 @@ pub fn build(
         }
     }
     if let Some(manifest) = &opt.manifest_path {
-        cmd.args(["--manifest-path", manifest.to_str().unwrap()]);
+        cmd.arg("--manifest-path");
+        cmd.arg(manifest);
     }
     if let Some(target) = &opt.target {
         cmd.args(["--target", target]);

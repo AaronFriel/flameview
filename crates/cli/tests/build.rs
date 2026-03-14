@@ -204,3 +204,61 @@ fn build_uses_mock_executor() {
     assert_eq!(artifacts.len(), 1);
     assert_eq!(artifacts[0].target.name, "eg");
 }
+
+#[cfg(unix)]
+#[test]
+fn build_accepts_non_utf8_manifest_path() {
+    use cargo_metadata::Message;
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+    use std::process::Output;
+
+    struct LenientExecutor(Output);
+
+    impl build::CommandExecutor for LenientExecutor {
+        fn run(&self, _cmd: &mut Command) -> std::io::Result<Output> {
+            Ok(self.0.clone())
+        }
+    }
+
+    let artifact = artifact_example("/tmp/eg");
+    let msg = Message::CompilerArtifact(artifact);
+    let mut stdout = serde_json::to_vec(&msg).unwrap();
+    stdout.push(b'\n');
+    let exec = LenientExecutor(Output {
+        status: success(),
+        stdout,
+        stderr: Vec::new(),
+    });
+
+    let mut opt = Opt {
+        dev: false,
+        cargo_profile: None,
+        package: None,
+        bin: Some("eg".into()),
+        example: None,
+        test: None,
+        bench: None,
+        unit_test: None,
+        unit_bench: None,
+        unit_test_kind: None,
+        manifest_path: None,
+        target: None,
+        features: None,
+        no_default_features: false,
+        release: false,
+        profile: profile::ProfileOptions {
+            frequency: 99,
+            output: None,
+            keep_perf_data: false,
+            cmd: None,
+        },
+        trailing_arguments: vec![],
+    };
+    opt.manifest_path = Some(PathBuf::from(OsString::from_vec(vec![
+        0x66, 0x6f, 0x80, 0x6f,
+    ])));
+
+    let artifacts = build::build(&exec, &opt, vec![TargetKind::Bin]).unwrap();
+    assert_eq!(artifacts.len(), 1);
+}
