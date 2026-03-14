@@ -206,7 +206,7 @@ impl<'a> App<'a> {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, not(miri)))]
     pub(crate) fn snapshot_text(&mut self, viewport_rows: usize, name_width: usize) -> String {
         self.viewport_rows = viewport_rows.max(1);
         self.rebuild_rows(self.viewport_rows);
@@ -248,7 +248,7 @@ impl<'a> App<'a> {
         lines.join("\n")
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, not(miri)))]
     pub(crate) fn visible_rows_len(&mut self, viewport_rows: usize) -> usize {
         self.rebuild_rows(viewport_rows.max(1));
         self.rows.len()
@@ -526,7 +526,7 @@ impl<'a> App<'a> {
             self.rows.push(RowMetrics {
                 id,
                 depth,
-                label: node.name.clone(),
+                label: sanitize_terminal_text(&node.name),
                 total_count: node.total_count,
                 self_count: node.self_count,
                 child_count,
@@ -868,9 +868,7 @@ fn heuristic_flags(
 }
 
 fn is_runtime_frame(name: &str) -> bool {
-    let mut normalized = name.trim_start_matches(|c: char| {
-        matches!(c, '<' | '>' | '&' | '*' | '(' | ')' | '\'' | ' ')
-    });
+    let mut normalized = name.trim_start_matches(['<', '>', '&', '*', '(', ')', '\'', ' ']);
     if let Some(stripped) = normalized.strip_prefix("dyn ") {
         normalized = stripped;
     }
@@ -887,9 +885,11 @@ fn is_runtime_frame(name: &str) -> bool {
         "[libc",
         "[ld-linux",
     ];
-    PREFIXES
-        .iter()
-        .any(|prefix| normalized.starts_with(prefix))
+    PREFIXES.iter().any(|prefix| normalized.starts_with(prefix))
+}
+
+fn sanitize_terminal_text(input: &str) -> String {
+    input.chars().filter(|c| !c.is_control()).collect()
 }
 
 #[cfg(all(test, not(miri)))]
@@ -965,8 +965,14 @@ root;streaming_json_;_start;__libc_start_main;main;std::rt::lang_start_internal;
         let snapshot = app.snapshot_text(14, 56);
         assert!(snapshot.contains("hide-rt:true"), "{snapshot}");
         assert!(!snapshot.contains("_start"), "{snapshot}");
-        assert!(!snapshot.contains("std::rt::lang_start_internal"), "{snapshot}");
-        assert!(snapshot.contains("streaming_json_large::benches"), "{snapshot}");
+        assert!(
+            !snapshot.contains("std::rt::lang_start_internal"),
+            "{snapshot}"
+        );
+        assert!(
+            snapshot.contains("streaming_json_large::benches"),
+            "{snapshot}"
+        );
     }
 
     #[test]
@@ -977,6 +983,19 @@ root;streaming_json_;_start;__libc_start_main;main;std::rt::lang_start_internal;
         let snapshot = app.snapshot_text(14, 56);
         assert!(snapshot.contains("hide-rt:false"), "{snapshot}");
         assert!(snapshot.contains("_start"), "{snapshot}");
-        assert!(snapshot.contains("std::rt::lang_start_internal"), "{snapshot}");
+        assert!(
+            snapshot.contains("std::rt::lang_start_internal"),
+            "{snapshot}"
+        );
+    }
+
+    #[test]
+    fn strips_terminal_control_sequences_from_labels() {
+        let data = "root;evil\u{1b}[31mRED\u{1b}[0m 5\n";
+        let tree = collapsed::load_stream(Cursor::new(data.as_bytes())).unwrap();
+        let mut app = App::new(&tree);
+        let snapshot = app.snapshot_text(8, 48);
+        assert!(!snapshot.contains('\u{1b}'), "{snapshot}");
+        assert!(snapshot.contains("evil[31mRED[0m"), "{snapshot}");
     }
 }
